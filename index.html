@@ -3,49 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizzatore PDF (Fix iOS)</title>
+    <title>Visualizzatore PDF (Fix Google Viewer)</title>
     <style>
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            
-            /* NON bloccare lo scrolling qui */
+            overflow: hidden; /* Blocchiamo lo scrolling della pagina */
         }
 
-        /* 1. CREIAMO UN CONTENITORE "WRAPPER" */
-        .pdf-container {
-            /* Fagli occupare l'intera finestra */
-            width: 100%;
-            height: 100vh; /* 100% dell'altezza della finestra */
-
-            /* * LA MAGIA È QUI: 
-             * Diciamo al browser (soprattutto Safari)
-             * di abilitare lo scrolling "nativo" (touch) 
-             * SOLO su questo contenitore.
-            */
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* 2. L'IFRAME ORA RIEMPIE IL CONTENITORE */
+        /* L'iframe riempie tutta la pagina */
         iframe {
             border: none;
             width: 100%;
-            height: 100%; 
+            height: 100%;
         }
     </style>
 </head>
 <body>
 
-    <div class="pdf-container">
-        
-        <iframe src="AM1.pdf">
-            <p>Il tuo browser non supporta la visualizzazione di PDF incorporati.</p>
-        </iframe>
-        
-    </div>
+    <iframe 
+      src="https://docs.google.com/viewer?url=https://sx273.github.io/AM1.pdf&embedded=true">
+    </iframe>
 
 </body>
 </html>

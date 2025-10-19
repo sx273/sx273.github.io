@@ -3,30 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizzatore PDF</title>
+    <title>Visualizzatore PDF (Fix iOS)</title>
     <style>
-        /* Rimuove margini e padding da tutto */
         html, body {
             margin: 0;
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden; /* Nasconde le barre di scorrimento della pagina */
+            
+            /* NON bloccare lo scrolling qui */
         }
 
-        /* Fa in modo che l'iframe riempia l'intera pagina */
-        iframe {
-            border: none; /* Rimuove il bordo dell'iframe */
+        /* 1. CREIAMO UN CONTENITORE "WRAPPER" */
+        .pdf-container {
+            /* Fagli occupare l'intera finestra */
             width: 100%;
-            height: 100%;
+            height: 100vh; /* 100% dell'altezza della finestra */
+
+            /* * LA MAGIA È QUI: 
+             * Diciamo al browser (soprattutto Safari)
+             * di abilitare lo scrolling "nativo" (touch) 
+             * SOLO su questo contenitore.
+            */
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        /* 2. L'IFRAME ORA RIEMPIE IL CONTENITORE */
+        iframe {
+            border: none;
+            width: 100%;
+            height: 100%; 
         }
     </style>
 </head>
 <body>
 
-    <iframe src="AM1.pdf">
-        <p>Il tuo browser non supporta la visualizzazione di PDF incorporati.</p>
-    </iframe>
+    <div class="pdf-container">
+        
+        <iframe src="AM1.pdf">
+            <p>Il tuo browser non supporta la visualizzazione di PDF incorporati.</p>
+        </iframe>
+        
+    </div>
 
 </body>
 </html>

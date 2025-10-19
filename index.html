@@ -3,29 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizzatore PDF (Fix Google Viewer)</title>
+    <title>Visualizzatore PDF (Google Drive)</title>
     <style>
-        html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; /* Blocchiamo lo scrolling della pagina */
-        }
-
-        /* L'iframe riempie tutta la pagina */
-        iframe {
-            border: none;
-            width: 100%;
-            height: 100%;
-        }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
+        iframe { border: none; width: 100%; height: 100%; }
     </style>
 </head>
 <body>
-
-    <iframe 
-      src="https://docs.google.com/viewer?url=caffettini.pdf&embedded=true">
+    <iframe src="https://drive.google.com/file/d/caffettini.pdfI/preview">
     </iframe>
-
 </body>
 </html>

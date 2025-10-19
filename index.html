@@ -3,74 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizzatore PDF (PDF.js)</title>
+    <title>Visualizzatore PDF (PDF.js con Debug)</title>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
 
     <style>
+        /* CSS IDENTICO A PRIMA - lo ometto per brevità */
         html, body {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #f0f0f0; /* Sfondo grigio chiaro */
-            font-family: Arial, sans-serif;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #f0f0f0; font-family: Arial, sans-serif;
         }
-
-        /* 1. La barra di navigazione in alto */
         #navigazione {
-            width: 100%;
-            padding: 10px 0;
-            background-color: #333;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            box-sizing: border-box; /* Assicura che il padding non rompa il layout */
+            width: 100%; padding: 10px 0; background-color: #333;
+            text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-sizing: border-box; height: 50px; /* Altezza fissa */
         }
-
         #navigazione button {
-            padding: 8px 16px;
-            font-size: 16px;
-            background-color: #555;
-            color: white;
-            border: none;
-            cursor: pointer;
-            border-radius: 4px;
+            padding: 8px 16px; font-size: 16px; background-color: #555;
+            color: white; border: none; cursor: pointer; border-radius: 4px;
         }
-
         #navigazione button:disabled {
-            background-color: #777;
-            cursor: not-allowed;
-            opacity: 0.5;
+            background-color: #777; cursor: not-allowed; opacity: 0.5;
         }
-
         #contatore_pagina {
-            color: white;
-            margin: 0 15px;
-            font-size: 16px;
-            display: inline-block;
-            vertical-align: middle;
+            color: white; margin: 0 15px; font-size: 16px;
+            display: inline-block; vertical-align: middle;
         }
-
-        /* 2. Il contenitore del PDF (per lo scrolling) */
         #container_pdf {
-            width: 100%;
-            /* Calcola l'altezza togliendo i 50px della barra di navigazione */
-            height: calc(100vh - 50px);
-            
-            /* LA PARTE IMPORTANTE PER iOS: */
-            overflow: auto; /* Permette lo scrolling */
-            -webkit-overflow-scrolling: touch; /* Scrolling fluido su iOS */
-            
-            text-align: center; /* Centra il canvas */
-            padding-top: 15px;
-            box-sizing: border-box;
+            width: 100%; height: calc(100vh - 50px);
+            overflow: auto; -webkit-overflow-scrolling: touch;
+            text-align: center; padding-top: 15px; box-sizing: border-box;
         }
-        
-        /* 3. Il canvas dove disegniamo il PDF */
         #pdf_canvas {
-            border: 1px solid black;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            /* Il canvas si ridimensionerà via JavaScript */
+            border: 1px solid black; box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
     </style>
 </head>
@@ -91,25 +56,26 @@
 
     <script>
         // ==========================================================
-        // CONFIGURAZIONE: CAMBIA SOLO QUESTA RIGA
+        // CONFIGURAZIONE
         // ==========================================================
         
-        // Metti il link (relativo o assoluto) al tuo file PDF qui
-        const url = 'caffettini.pdf';
+        // METTI IL NOME ESATTO DEL FILE PDF (deve essere nella stessa cartella)
+        const url = 'tuo-file.pdf'; // <-- CONTROLLA CHE SIA IDENTICO
 
         // ==========================================================
-        // Logica di PDF.js (non serve modificare sotto)
+        // Logica di PDF.js (con DEBUG)
         // ==========================================================
 
-        // Impostiamo il "worker" (necessario per PDF.js)
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        const workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;
+        console.log("Avvio PDF.js... worker impostato su:", workerSrc);
+
 
         let pdfDoc = null;
         let pageNum = 1;
         let pageRendering = false;
         let pageNumPending = null;
         
-        const scale = 1.5; // Puoi aumentare/diminuire lo zoom
         const canvas = document.getElementById('pdf_canvas');
         const ctx = canvas.getContext('2d');
         const container = document.getElementById('container_pdf');
@@ -119,24 +85,25 @@
         const prevButton = document.getElementById('prev');
         const nextButton = document.getElementById('next');
 
-        /**
-         * Renderizza una pagina specifica
-         */
         function renderPage(num) {
             pageRendering = true;
             
-            // Ottieni la pagina
             pdfDoc.getPage(num).then(function(page) {
+                console.log('Pagina ' + num + ' caricata con successo.');
                 
-                // Adattiamo la larghezza del canvas a quella del contenitore
                 const viewport = page.getViewport({ scale: 1 });
-                const scale = container.clientWidth / viewport.width;
-                const scaledViewport = page.getViewport({ scale: scale * 0.95 }); // 95% della larghezza
+                let scale = (container.clientWidth / viewport.width) * 0.98;
+                
+                // Su mobile, potremmo voler uno zoom diverso
+                if (window.innerWidth < 768) {
+                     scale = window.innerWidth / viewport.width;
+                }
+
+                const scaledViewport = page.getViewport({ scale: scale });
 
                 canvas.height = scaledViewport.height;
                 canvas.width = scaledViewport.width;
 
-                // Renderizza la pagina sul canvas
                 const renderContext = {
                     canvasContext: ctx,
                     viewport: scaledViewport
@@ -145,26 +112,20 @@
                 const renderTask = page.render(renderContext);
 
                 renderTask.promise.then(function() {
+                    console.log('Pagina ' + num + ' renderizzata.');
                     pageRendering = false;
                     if (pageNumPending !== null) {
-                        // Se c'era una pagina in attesa, la renderizza
                         renderPage(pageNumPending);
                         pageNumPending = null;
                     }
                 });
                 
-                // Aggiorna il contatore
                 pageCurrentSpan.textContent = num;
-                
-                // Abilita/Disabilita i bottoni
                 prevButton.disabled = (num <= 1);
                 nextButton.disabled = (num >= pdfDoc.numPages);
             });
         }
 
-        /**
-         * Mette in coda una pagina se un'altra è già in rendering
-         */
         function queueRenderPage(num) {
             if (pageRendering) {
                 pageNumPending = num;
@@ -173,36 +134,43 @@
             }
         }
 
-        /**
-         * Va alla pagina precedente
-         */
-        function onPrevPage() {
+        prevButton.addEventListener('click', () => {
             if (pageNum <= 1) return;
             pageNum--;
             queueRenderPage(pageNum);
-        }
-        prevButton.addEventListener('click', onPrevPage);
+        });
 
-        /**
-         * Va alla pagina successiva
-         */
-        function onNextPage() {
+        nextButton.addEventListener('click', () => {
             if (pageNum >= pdfDoc.numPages) return;
             pageNum++;
             queueRenderPage(pageNum);
-        }
-        nextButton.addEventListener('click', onNextPage);
+        });
 
-        /**
-         * Carica il documento PDF
-         */
+        // ==========================================================
+        // CARICAMENTO DOCUMENTO (LA PARTE CRITICA)
+        // ==========================================================
+        
+        console.log("Tentativo di caricamento PDF da:", url);
+
         pdfjsLib.getDocument(url).promise.then(function(doc) {
+            console.log("PDF caricato con successo!");
             pdfDoc = doc;
             pageTotalSpan.textContent = pdfDoc.numPages;
-            renderPage(pageNum); // Renderizza la prima pagina
+            renderPage(pageNum);
         }).catch(function(err) {
-            console.error('Errore durante il caricamento del PDF: ' + err.message);
-            alert('Impossibile caricare il PDF.');
+            
+            // QUI VEDIAMO L'ERRORE
+            console.error('Errore durante il caricamento del PDF:', err);
+            
+            // Messaggio di errore più specifico
+            let errorMsg = 'Impossibile caricare il PDF.\nControlla la console (F12) per i dettagli.';
+            if (err.name === 'MissingPDFException' || err.message.includes('404')) {
+                errorMsg = 'ERRORE: File PDF non trovato.\nControlla che il nome del file "' + url + '" sia corretto e che il file sia stato caricato su GitHub.';
+            } else if (err.message.includes('CORS')) {
+                 errorMsg = 'ERRORE: Stai provando ad aprire il file in locale (file:///).\nCaricalo su GitHub e testa il sito live.';
+            }
+            
+            alert(errorMsg);
         });
     </script>
 

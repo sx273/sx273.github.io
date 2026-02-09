@@ -1,1 +1,195 @@
 
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Per Isa ❤️</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #ffe4e1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Schermata iniziale per sbloccare l'audio */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #ffb6c1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        #overlay h2 { color: white; font-size: 2rem; text-shadow: 2px 2px 4px rgba(0,0,0,0.2); }
+
+        .petal {
+            position: absolute;
+            top: -10%;
+            background-color: #ff4d6d;
+            border-radius: 150% 0 150% 0;
+            opacity: 0.8;
+            pointer-events: none;
+            z-index: 1;
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+        }
+
+        .container {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            backdrop-filter: blur(5px);
+            z-index: 10;
+            display: none; /* Nascosto finché non si clicca l'overlay */
+        }
+
+        h1 { color: #d63384; font-size: 2.5rem; margin-bottom: 20px; }
+
+        .gif-container {
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        img { max-height: 100%; border-radius: 15px; }
+
+        .buttons { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+
+        button {
+            padding: 15px 30px; font-size: 1.2rem; border: none;
+            border-radius: 10px; cursor: pointer; transition: all 0.2s ease-in-out;
+        }
+
+        .yes-button { background-color: #28a745; color: white; box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3); }
+        .no-button { background-color: #dc3545; color: white; box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3); }
+
+        #success-message { display: none; }
+    </style>
+</head>
+<body>
+
+    <div id="overlay" onclick="initExperience()">
+        <h2>Hai un messaggio da Fili... ❤️</h2>
+        <p style="color: white; font-size: 1.2rem;">(Clicca il cuore per aprire)</p>
+        <div style="font-size: 5rem; margin-top: 20px;">💝</div>
+    </div>
+
+    <audio id="romantic-music" loop>
+        <source src="https://www.myinstants.com/media/sounds/romantic-sound.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="sad-violin" loop>
+        <source src="https://www.myinstants.com/media/sounds/sad-ham.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="happy-music" loop>
+        <source src="https://www.myinstants.com/media/sounds/happy-happy-happy-cat.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="container" id="main-container">
+        <h1 id="question">Isa, vuoi essere la mia Valentina? 🌹</h1>
+        <div class="gif-container">
+            <img id="display-image" src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGZ3bmZqZzR4eGZ3bmZqZzR4eGZ3bmZqZzR4eGZ3bmZqJnB0X2t5PSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Gattino">
+        </div>
+        <div class="buttons">
+            <button class="yes-button" id="yesBtn" onclick="handleYes()">Sì</button>
+            <button class="no-button" id="noBtn" onclick="handleNo()">No</button>
+        </div>
+    </div>
+
+    <div class="container" id="success-message">
+        <h1>SIIIIIIIIIIIIIIIIII LO SAPEVO! ❤️</h1>
+        <div class="gif-container">
+            <img src="https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExOG92a2h5c2R3YTg5MmtmN2szbXgzcHQ3cTNrMm1ncGZtemRvanY4eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/cbD4NSXZutjebF8cd8/giphy.gif" alt="Gattino felice">
+        </div>
+        <p style="font-size: 1.5rem; color: #d63384;">Ti voglio bene, Isa! ✨</p>
+    </div>
+
+    <script>
+        let noClickCount = 0;
+        let isSadMode = false;
+        
+        const romanticMusic = document.getElementById('romantic-music');
+        const sadViolin = document.getElementById('sad-violin');
+        const happyMusic = document.getElementById('happy-music');
+
+        const messages = [
+            "Sei sicura?", "Ma proprio sicura sicura?", "Isa, daiiiiii...",
+            "Eh no pero, sei cattiva", "Mi renderai tristissimo...",
+            "Sei così cattiva?", "Ti pregoooo ISAAAAAAAAAAAAAAAA!",
+            "Uffi non vale", "Questo tasto è rotto!", "Hai spezzato il mio cuoricino..."
+        ];
+
+        // Questa funzione sblocca l'audio e mostra la pagina
+        function initExperience() {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('main-container').style.display = 'block';
+            romanticMusic.play().catch(e => console.log("Errore audio:", e));
+        }
+
+        function createPetal() {
+            const petal = document.createElement('div');
+            petal.classList.add('petal');
+            petal.style.left = Math.random() * 100 + 'vw';
+            const size = Math.random() * 15 + 10 + 'px';
+            petal.style.width = size;
+            petal.style.height = size;
+            const duration = Math.random() * 3 + 3 + 's';
+            petal.style.animationDuration = duration;
+            document.body.appendChild(petal);
+            setTimeout(() => petal.remove(), 6000);
+        }
+        setInterval(createPetal, 300);
+
+        function handleNo() {
+            // Al primo click su NO, parte subito il Sad Violin
+            if (!isSadMode) {
+                romanticMusic.pause();
+                sadViolin.play();
+                isSadMode = true;
+            }
+
+            const noBtn = document.getElementById('noBtn');
+            const yesBtn = document.getElementById('yesBtn');
+            const img = document.getElementById('display-image');
+            
+            noBtn.textContent = messages[noClickCount % messages.length];
+            noClickCount++;
+
+            const currentSize = parseFloat(window.getComputedStyle(yesBtn).fontSize);
+            yesBtn.style.fontSize = (currentSize * 1.4) + 'px';
+            yesBtn.style.padding = (parseFloat(window.getComputedStyle(yesBtn).paddingTop) * 1.2) + 'px ' + 
+                                  (parseFloat(window.getComputedStyle(yesBtn).paddingLeft) * 1.2) + 'px';
+            
+            // Cambia GIF gattino che piange
+            img.src = "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExMHIweDQwN28xbmJscmZqaDdiM3Q3ODM3eWtqdzg0MGJxM2k2bXY1byZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/fYLrVmLXG9tVL4Aykg/giphy.gif";
+        }
+
+        function handleYes() {
+            romanticMusic.pause();
+            sadViolin.pause();
+            happyMusic.play();
+
+            document.getElementById('main-container').style.display = 'none';
+            document.getElementById('success-message').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

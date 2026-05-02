@@ -8,77 +8,75 @@
         body {
             margin: 0;
             padding: 0;
-            background-color: #0b0b0d; /* Sfondo scuro profondo */
-            color: #d1d1d1;
+            background-color: #0d0d0f;
+            color: #b0b0b0;
             font-family: 'Georgia', serif;
+            /* Permette lo scrolling se il testo è lungo */
+            min-height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
-            height: 100vh;
-            overflow: hidden;
-            text-align: center;
         }
 
-        /* Contenitore della pioggia */
-        .rain {
-            position: absolute;
+        /* SFONDO PIOGGIA: Fissato allo schermo */
+        #rainContainer {
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
             z-index: 1;
             pointer-events: none;
+            overflow: hidden;
         }
 
         .drop {
             position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            width: 1px;
-            height: 80px;
-            top: -100px;
+            background: linear-gradient(transparent, rgba(255, 255, 255, 0.4));
+            width: 2px; /* Leggermente più visibile */
+            height: 100px;
+            top: -120px;
             animation: fall linear infinite;
         }
 
         @keyframes fall {
             to {
-                transform: translateY(110vh);
+                transform: translateY(120vh);
             }
         }
 
-        /* Contenuto del testo */
+        /* CONTENUTO TESTUALE */
         .content {
             position: relative;
-            z-index: 2;
-            max-width: 600px;
-            padding: 20px;
-            animation: fadeIn 3s ease-in;
+            z-index: 2; /* Sopra la pioggia */
+            max-width: 700px;
+            margin: 100px 20px; /* Spazio sopra e sotto per lo scrolling */
+            line-height: 1.8;
+            font-size: 1.25rem;
+            text-align: center;
+            white-space: pre-wrap;
+            background: rgba(13, 13, 15, 0.6); /* Leggera ombra per leggere meglio */
+            padding: 40px;
+            border-radius: 8px;
         }
 
         h1 {
-            font-weight: lighter;
+            font-weight: 300;
             font-style: italic;
-            opacity: 0.8;
-        }
-
-        p {
-            line-height: 1.6;
-            font-size: 1.2rem;
-            white-space: pre-wrap; /* Mantiene gli a capo del tuo testo */
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            margin-bottom: 50px;
+            color: #ffffff;
+            opacity: 0.7;
         }
     </style>
 </head>
 <body>
 
-    <div class="rain" id="rainContainer"></div>
+    <div id="rainContainer"></div>
 
     <div class="content">
+        <h1>Frammenti</h1>
         <p>
-         Dato che questa pagina è accessibile a chiunque, i nomi usati non saranno reali, ma puri riferimenti che solo l'intestataria di questa lettera può comprendere
+            Dato che questa pagina è accessibile a chiunque, i nomi usati non saranno reali, ma puri riferimenti che solo l'intestataria di questa lettera può comprendere
 
 
 
@@ -152,36 +150,36 @@ Hercules.
 
 P.S. Se noti che la lettera è scritta male è perché sto scrivendo tutto di getto, e non mi preoccupa tanto il fatto che tu possa leggerla, perché so che forse in fondo non leggerai mai tutto questo. Inoltre rimuoverò la lettera nel momento in cui avrò smesso di pensare a te in senso non amicale, e quando smetterò di sperare che tu possa leggerla
 
+
         </p>
     </div>
 
     <script>
-        // Funzione per generare gocce di pioggia casuali
         function createRain() {
             const container = document.getElementById('rainContainer');
-            const dropCount = 100; // Numero di gocce (pioggerellina)
+            const dropCount = 120; // Numero di gocce
 
             for (let i = 0; i < dropCount; i++) {
                 const drop = document.createElement('div');
                 drop.classList.add('drop');
                 
-                // Posizione orizzontale casuale
+                // Distribuzione casuale
                 drop.style.left = Math.random() * 100 + 'vw';
                 
-                // Durata della caduta casuale per un effetto naturale
-                drop.style.animationDuration = (Math.random() * 1 + 1) + 's';
-                
-                // Ritardo casuale per non farle cadere tutte insieme
+                // Velocità e ritardo casuale per realismo
+                const duration = Math.random() * 0.7 + 0.7; 
+                drop.style.animationDuration = duration + 's';
                 drop.style.animationDelay = Math.random() * 2 + 's';
                 
-                // Opacità variabile
-                drop.style.opacity = Math.random() * 0.3;
+                // Diverse trasparenze per dare profondità
+                drop.style.opacity = Math.random() * 0.4;
 
                 container.appendChild(drop);
             }
         }
 
-        createRain();
+        // Avvia l'animazione al caricamento
+        window.onload = createRain;
     </script>
 </body>
 </html>

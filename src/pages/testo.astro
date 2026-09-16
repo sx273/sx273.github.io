@@ -1,0 +1,37 @@
+---
+// titolo a caso
+const pageTitle = "Testo Sacro";
+---
+
+<html lang="it">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width" />
+        <meta name="generator" content={Astro.generator} />
+        <title>{pageTitle}</title>
+    </head>
+
+    <body>
+        <h1>{pageTitle}</h1>
+        <p>
+            <strong>
+                "Infusio santa, destami; Aroma sacro, guidami; Caffé eterno,
+                riempimi."
+            </strong>
+        </p>
+
+        <p>
+            Elenco capitoli:
+            <ul>
+                <li>
+                    <a href="/chapters/ch1/">
+                        Principia Fundamentalia Ordis Aurei Caffettinorum</a>
+                </li>
+                <li>
+                    <a href="/chapters/ch2/">
+                        Principia Sacra ad Intervalla Scholastica De Cazzeggio</a>
+                </li>
+            </ul>
+        </p>
+    </body>
+</html>

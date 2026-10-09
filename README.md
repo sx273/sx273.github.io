@@ -1,3 +1,3 @@
 # WORK IN PROGRESS
 
-if you are gay, please don't look at it
+If you are against coffee, please don't look at it

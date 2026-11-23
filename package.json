@@ -20,6 +20,6 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",
-    "astro": "^7.4.12"
+    "astro": "^7.4.13"
   }
 }
